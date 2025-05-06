@@ -91,8 +91,11 @@ namespace Squawk
                 return GenerateFallbackSquawk();
             }
 
-            logger_.info("Recieved squawk " + trim(result->body) + " for " + callsign);
-            return trim(result->body);
+            std::string recievedSquawk = result->body;
+            logger_.info("Recieved squawk " + recievedSquawk + " for " + callsign);
+            std::lock_guard<std::mutex> lock(assignedSquawksMutex_);
+            assignedSquawks_.push_back(recievedSquawk);
+            return recievedSquawk;
         }
 
         // If all else fails, generate a fallback squawk
@@ -154,7 +157,7 @@ namespace Squawk
 
     std::string SquawkProvider::collectSquawks()
     {
-        std::vector<std::string> collectedSquawks;
+        std::vector<std::string> collectedSquawks = assignedSquawks_;
         std::vector<PluginSDK::Aircraft::Aircraft> aircrafts = aircraftAPI_.getAll();
         for (const auto &aircraft : aircrafts)
         {

@@ -2,6 +2,7 @@
 #pragma once
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <httplib.h>
+#include <mutex>
 #include <random>
 #include <regex>
 #include "SDK.h"
@@ -45,6 +46,8 @@ namespace Squawk
         PluginSDK::Logger::LoggerAPI &logger_;
         std::unique_ptr<httplib::Client> httpClient_;
         std::unique_ptr<httplib::SSLClient> httpsClient_;
+        std::vector<std::string> assignedSquawks_;
+        std::mutex assignedSquawksMutex_;
 
         // Extract the host from the URL
         std::string GetHost(const std::string url) const;
