@@ -52,8 +52,6 @@ namespace Squawk
 
         if (fsdAPI_.getConnection().has_value()) 
         {
-           
-
             std::string url = CCAMS_API_BASE + CCAMS_API_ENDPOINT + 
             "?callsign=" + fsdAPI_.getConnection().value().callsign +
             "&origin=" + flightplan.origin +
@@ -151,7 +149,7 @@ namespace Squawk
     {
         return std::regex_match(origin, MODES_AIRPORT_ICAO_PATTERN) &&
                std::regex_match(destination, MODES_AIRPORT_ICAO_PATTERN) &&
-               std::regex_match(transponderEquipment, MODES_EQUIPMENT_PATTERN);
+               std::regex_search(transponderEquipment, MODES_EQUIPMENT_PATTERN);
     }
 
     std::string SquawkProvider::collectSquawks()
