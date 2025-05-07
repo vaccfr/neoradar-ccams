@@ -10,7 +10,7 @@
 namespace Squawk
 {
 
-    const std::regex MODES_AIRPORT_ICAO_PATTERN("^((E([BDHLT]|P(?!CE|DA|DE|IR|KS|LK|LY|MB|MI|MM|OK|PR|PW|SN|TM)|URM)|L[DFHIKORZ])[A-Z]{2}|LS(G[CG]|Z[BGHR]))");
+    const std::regex MODES_AIRPORT_ICAO_PATTERN("^((E([BDHLT]|P(?!CE|DA|DE|IR|KS|LK|LY|MB|MI|MM|OK|PR|PW|SN|TM)|URM)|L[DHIKORZ])[A-Z]{2}|LF[^V][A-Z]|LS(G[CG]|Z[BGHR]))");
     const std::regex MODES_EQUIPMENT_PATTERN("[EHILPSX]");
     const std::string MODES_SQUAWK = "1000";
     const std::string VFR_SQUAWK = "7000";
