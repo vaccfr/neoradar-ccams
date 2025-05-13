@@ -49,7 +49,7 @@ jobs:
         id: short-sha
   
       - name: Compute version
-        id: compute-version
+        id: compute_version
         shell: bash
         run: |
           version="${{ steps.short-sha.outputs.sha }}"
@@ -75,7 +75,7 @@ jobs:
       - name: Configure CMake
         shell: bash
         run: |
-          cmake . -DPLUGIN_VERSION=${{ steps.compute-version.outputs.version }} 
+          cmake . -DPLUGIN_VERSION=${{ steps.compute_version.outputs.version }}
 
       - name: Build
         shell: bash
