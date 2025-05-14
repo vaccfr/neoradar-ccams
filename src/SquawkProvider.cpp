@@ -19,16 +19,13 @@ namespace Squawk
                                                 rng_(std::random_device{}()),
                                                 dist_(0, 7)
     {
-        // Build SSL Client
-        std::string host = GetHost(CCAMS_API_BASE);
-        logger_.info("Creating HTTPS client for host: " + host);
-        httpsClient_ = std::make_unique<httplib::SSLClient>(host);
-        httpsClient_->set_connection_timeout(10); // 10 seconds
-        httpsClient_->set_read_timeout(30);       // 30 seconds
-        httpsClient_->set_write_timeout(30);      // 30 seconds
+        // Build HTTP Client
+        httpClient_ = std::make_unique<httplib::Client>(CCAMS_API_BASE);
+        httpClient_->set_connection_timeout(10); // 10 seconds
+        httpClient_->set_read_timeout(30);       // 30 seconds
+        httpClient_->set_write_timeout(30);      // 30 seconds
         // Skip verification in development (remove in production)
-        httpsClient_->enable_server_certificate_verification(true);
-
+        httpClient_->enable_server_certificate_verification(true);
     }
 
     std::string SquawkProvider::GenerateSquawk(
@@ -77,7 +74,7 @@ namespace Squawk
             headers.emplace("User-Agent", "neoradar/" + info_.clientVersion);
             try
             {
-                result = httpsClient_->Get(url.c_str(), headers);
+                result = httpClient_->Get(url.c_str(), headers);
             }
             catch (const std::exception &e)
             {
@@ -123,25 +120,6 @@ namespace Squawk
             squawk << dist_(rng_);
         }
         return squawk.str();
-    }
-
-    std::string SquawkProvider::GetHost(const std::string url) const
-    {
-        std::string host = url;
-
-        // Remove protocol prefix if present
-        size_t protocolPos = host.find("://");
-        if (protocolPos != std::string::npos) {
-            host = host.substr(protocolPos + 3);
-        }
-
-        // Remove path if present
-        size_t pathPos = host.find('/');
-        if (pathPos != std::string::npos) {
-            host = host.substr(0, pathPos);
-        }
-
-        return host;
     }
 
     bool SquawkProvider::isModeS(

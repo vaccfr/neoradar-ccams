@@ -45,12 +45,8 @@ namespace Squawk
         PluginSDK::ClientInformation info_;
         PluginSDK::Logger::LoggerAPI &logger_;
         std::unique_ptr<httplib::Client> httpClient_;
-        std::unique_ptr<httplib::SSLClient> httpsClient_;
         std::vector<std::string> assignedSquawks_;
         std::mutex assignedSquawksMutex_;
-
-        // Extract the host from the URL
-        std::string GetHost(const std::string url) const;
 
         // Random number generator for fallback squawks
         std::mt19937 rng_;
