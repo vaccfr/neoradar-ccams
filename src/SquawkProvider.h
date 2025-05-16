@@ -10,7 +10,6 @@
 namespace Squawk
 {
 
-    int SQUAWK_PROVIDER_PRIORITY = 100;
     const std::regex MODES_AIRPORT_ICAO_PATTERN("^((E([BDHLT]|P(?!CE|DA|DE|IR|KS|LK|LY|MB|MI|MM|OK|PR|PW|SN|TM)|URM)|L[DHIKORZ])[A-Z]{2}|LF[^V][A-Z]|LS(G[CG]|Z[BGHR]))");
     const std::regex MODES_EQUIPMENT_PATTERN("[EHILPSX]");
     const std::string MODES_SQUAWK = "1000";

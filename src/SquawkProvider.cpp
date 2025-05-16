@@ -108,7 +108,7 @@ namespace Squawk
 
     int SquawkProvider::GetPriority() const
     {
-        return SQUAWK_PROVIDER_PRIORITY; // Higher than default (0)
+        return 100; // Higher than default (0)
     }
 
     std::string SquawkProvider::GenerateFallbackSquawk()
