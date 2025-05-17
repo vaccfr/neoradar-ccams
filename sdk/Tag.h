@@ -1,9 +1,9 @@
 #pragma once
-#include <string>
-#include <vector>
+#include <array>
 #include <map>
 #include <optional>
-#include <array>
+#include <string>
+#include <vector>
 namespace PluginSDK {
 namespace Tag {
 
@@ -46,6 +46,8 @@ enum class DropdownComponentType {
     ScrollArea
 };
 
+enum class DropdownAlignmentType { Center, Right, Left };
+
 struct DropdownComponentStyle {
     std::optional<std::array<unsigned int, 3>> backgroundColor;
     std::optional<std::array<unsigned int, 3>> textColor;
@@ -55,6 +57,7 @@ struct DropdownComponentStyle {
     std::optional<int> height;
     std::optional<bool> border;
     std::optional<std::string> className;
+    std::optional<DropdownAlignmentType> textAlign;
 };
 
 struct DropdownComponent {
@@ -84,16 +87,24 @@ struct DropdownActionEvent {
 class TagInterface {
 public:
     virtual ~TagInterface() = default;
-    
+
     virtual std::string RegisterTagItem(const TagItemDefinition& definition) = 0;
     virtual std::string RegisterTagAction(const TagActionDefinition& definition) = 0;
-    virtual bool UpdateTagValue(const std::string& tagId, const std::string& value, const TagContext& context) = 0;
-    
-    virtual bool SetActionDropdown(const std::string& actionId, const DropdownDefinition& dropdown) = 0;
-    virtual bool UpdateActionDropdown(const std::string& actionId, const DropdownDefinition& dropdown) = 0;
+    virtual bool UpdateTagValue(
+        const std::string& tagId, const std::string& value, const TagContext& context)
+        = 0;
+
+    virtual bool SetActionDropdown(
+        const std::string& actionId, const DropdownDefinition& dropdown)
+        = 0;
+    virtual bool UpdateActionDropdown(
+        const std::string& actionId, const DropdownDefinition& dropdown)
+        = 0;
     virtual bool RemoveActionDropdown(const std::string& actionId) = 0;
-    
-    virtual bool GetDropdownForAction(const std::string& actionId, DropdownDefinition& outDropdown) const = 0;
+
+    virtual bool GetDropdownForAction(
+        const std::string& actionId, DropdownDefinition& outDropdown) const
+        = 0;
 };
 
 class TagAPI {

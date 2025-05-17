@@ -1,25 +1,118 @@
 #pragma once
+#include <cmath>
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 namespace PluginSDK::Flightplan {
 
-/**
- * @enum VoiceType
- * @brief Type of voice communication
- */
-enum class VoiceType {
-    Unknown = 0,
-    Full = 1,
-    Receive = 2,
-    Text = 3
+enum class VoiceType { Unknown = 0, Full = 1, Receive = 2, Text = 3 };
+
+enum class FlightRule { IFR, VFR, DVFR, SVFR };
+
+enum class WaypointType {
+    FIX,
+    VOR,
+    DME,
+    VORDME,
+    NDBDME,
+    VORTAC,
+    TACAN,
+    NDB,
+    AIRPORT,
+    LATLON,
+    UNKNOWN
 };
 
-/**
- * @struct Flightplan
- * @brief Represents a stored flightplan in the system
- */
+enum class ParsingErrorLevel { INFO, PARSE_ERROR };
+
+enum class ParsingErrorType {
+    ROUTE_EMPTY,
+    PROCEDURE_RUNWAY_MISMATCH,
+    PROCEDURE_AIRPORT_MISMATCH,
+    UNKNOWN_PROCEDURE,
+    UNKNOWN_WAYPOINT,
+    NO_PROCEDURE_FOUND,
+    INVALID_RUNWAY,
+    INVALID_DATA,
+    UNKNOWN_AIRPORT,
+    UNKNOWN_NAVAID,
+    UNKNOWN_AIRWAY,
+    INVALID_TOKEN_FORMAT,
+    INVALID_AIRWAY_FORMAT,
+    INVALID_AIRWAY_DIRECTION,
+    AIRWAY_FIX_NOT_FOUND,
+    INSUFFICIENT_FLIGHT_LEVEL,
+    MULTIPLE_AIRWAYS_FOUND
+};
+
+enum class SpeedUnit { KNOTS, MACH, KMH };
+
+enum class DistanceUnit { NAUTICAL_MILES, KILOMETERS, FEET, METERS };
+
+struct Position {
+    double latitude = 0.0;
+    double longitude = 0.0;
+};
+
+struct Waypoint {
+    WaypointType type = WaypointType::UNKNOWN;
+    std::string identifier;
+    Position position;
+    int frequencyHz = 0;
+};
+
+struct PlannedAltitudeAndSpeed {
+    std::optional<int> plannedAltitude;
+    std::optional<int> plannedSpeed;
+    DistanceUnit altitudeUnit = DistanceUnit::FEET;
+    SpeedUnit speedUnit = SpeedUnit::KNOTS;
+};
+
+struct RouteWaypoint : public Waypoint {
+    std::optional<PlannedAltitudeAndSpeed> plannedPosition;
+    FlightRule flightRule = FlightRule::IFR;
+};
+
+struct ParsingError {
+    ParsingErrorType type;
+    std::string message;
+    int tokenIndex = 0;
+    std::string token;
+    ParsingErrorLevel level;
+};
+
+struct ParsedRouteSegment {
+    RouteWaypoint from;
+    RouteWaypoint to;
+    std::string airway; // "DCT" for direct connections
+    int heading = 0;
+    int minimumLevel = -1;
+};
+
+struct Route {
+    std::string rawRoute;
+    std::vector<RouteWaypoint> waypoints;
+    std::vector<ParsedRouteSegment> segments;
+    std::vector<ParsedRouteSegment> explicitSegments;
+    std::vector<ParsingError> errors;
+    std::vector<ParsedRouteSegment> originalSegments;
+
+    bool hasDirectApplied = false;
+    Waypoint currentDirectWaypoint;
+
+    std::string sid;
+    std::string star;
+    std::string suggestedSid;
+    std::string suggestedStar;
+    std::string depRunway;
+    std::string arrRunway;
+    std::string suggestedDepRunway;
+    std::string suggestedArrRunway;
+
+    bool isAmended = false;
+};
+
 struct Flightplan {
     std::string callsign;
     std::string flightRule;
@@ -31,9 +124,12 @@ struct Flightplan {
     std::string origin;
     std::string destination;
     std::string alternate;
-    std::string route;
-    int plannedAltitude;
-    int plannedTas;
+    std::optional<Waypoint> originWaypoint;
+    std::optional<Waypoint> destinationWaypoint;
+    std::optional<Waypoint> alternateWaypoint;
+    Route route;
+    int plannedAltitude = 0;
+    int plannedTas = 0;
     std::string flightTimeHours;
     std::string flightTimeMinutes;
     std::string fuelTimeHours;
@@ -42,68 +138,39 @@ struct Flightplan {
     std::string aobt;
     std::string remarks;
     bool isValid = true;
-    VoiceType voiceType;
+    VoiceType voiceType = VoiceType::Unknown;
 };
-/**
- * @struct FlightplanUpdatedEvent
- * @brief Event fired when a flightplan is updated
- */
+
 struct FlightplanUpdatedEvent {
     std::string callsign;
     std::string origin;
     std::string destination;
-    std::string route;
+    Route route;
     std::string acType;
     std::string altitude;
     std::string rules;
 };
 
-/**
- * @struct FlightplanRemovedEvent
- * @brief Event fired when a flightplan is removed
- */
 struct FlightplanRemovedEvent {
     std::string callsign;
 };
 
-/**
- * @struct FlightplanVoiceTypeChangedEvent
- * @brief Event fired when a flightplan's voice type changes
- */
 struct FlightplanVoiceTypeChangedEvent {
     std::string callsign;
     VoiceType oldVoiceType;
     VoiceType newVoiceType;
 };
 
-/**
- * @struct FlightplanRouteChangedEvent
- * @brief Event fired when a flightplan's route changes
- */
 struct FlightplanRouteChangedEvent {
     std::string callsign;
     std::string newRoute;
 };
 
-/**
- * @interface FlightplanAPI
- * @brief Interface for flightplan operations
- */
 class FlightplanAPI {
 public:
     virtual ~FlightplanAPI() = default;
 
-    /**
-     * @brief Get all flightplans in the system
-     * @return Vector of flightplan data
-     */
     virtual std::vector<Flightplan> getAll() = 0;
-
-    /**
-     * @brief Get a flightplan by callsign
-     * @param callsign The callsign to look up
-     * @return Flightplan data or nullptr if not found
-     */
     virtual std::optional<Flightplan> getByCallsign(const std::string& callsign) = 0;
 };
 

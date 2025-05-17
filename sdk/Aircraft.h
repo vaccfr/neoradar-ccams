@@ -137,6 +137,23 @@ public:
      * @return Aircraft data or nullptr if not found
      */
     virtual std::optional<Aircraft> getByCallsign(const std::string& callsign) = 0;
+
+    /**
+     * @brief Get the distance from aircraft to its origin airport
+     * @param callsign The aircraft callsign
+     * @return Distance in nautical miles if available, std::nullopt if aircraft or origin not
+     * found
+     */
+    virtual std::optional<double> getDistanceFromOrigin(const std::string& callsign) = 0;
+
+    /**
+     * @brief Get the distance from aircraft to its destination airport
+     * @param callsign The aircraft callsign
+     * @return Distance in nautical miles if available, std::nullopt if aircraft or destination
+     * not found
+     */
+    virtual std::optional<double> getDistanceToDestination(const std::string& callsign)
+        = 0;
 };
 
 } // namespace PluginSDK::Aircraft

@@ -1,5 +1,4 @@
-﻿// plugin/sdk/CoreAPI.h
-#pragma once
+﻿#pragma once
 #include "Aircraft.h"
 #include "Flightplan.h"
 #include "Controller.h"
@@ -12,6 +11,7 @@
 #include "EuroScope.h"
 #include "TextMessage.h"
 #include "Sectors.h"
+#include "Chat.h"
 #include <filesystem>
 
 namespace PluginSDK {
@@ -101,6 +101,9 @@ public:
      * @return Reference to the TextMessage API
      */
     virtual TextMessage::TextMessageAPI& textMessage() = 0;
+
+    
+    virtual Chat::ChatAPI& chat() = 0;
 };
 
 /**
