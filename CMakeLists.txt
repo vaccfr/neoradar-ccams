@@ -50,3 +50,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     PREFIX ""  # Remove "lib" prefix on Unix-like systems
 )
+
+# Add processor-specific output name for Apple platforms
+if(${CMAKE_HOST_APPLE})
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME ${PROJECT_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}
+    )
+endif()

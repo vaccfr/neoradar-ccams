@@ -13,11 +13,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+      build_type: Release
 
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-2022]
-        build_type: [Release]
+        architecture: [x86_64, arm64]
         # Adds a platform value to the matrix, used later on to run the appropriate
         # package command.
         include:
@@ -27,6 +28,11 @@ jobs:
             platform: mac
           - os: windows-2022
             platform: win
+        exclude:
+          - os: ubuntu-latest
+            architecture: arm64
+          - os: windows-2022
+            architecture: arm64
 
     steps:
       - name: Export GitHub Actions cache environment variables
@@ -47,7 +53,7 @@ jobs:
       - name: Get commit short SHA
         uses: benjlevesque/short-sha@v3.0
         id: short-sha
-  
+
       - name: Compute version
         id: compute_version
         shell: bash
@@ -72,22 +78,29 @@ jobs:
           brew update
           brew install utf8proc
 
-      - name: Configure CMake
+      - name: Configure CMake (Windows and Linux)
+        if: matrix.os != 'macos-latest'
         shell: bash
         run: |
           cmake . -DPLUGIN_VERSION=${{ steps.compute_version.outputs.version }}
+
+      - name: Configure CMake (MacOS)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          cmake . -DPLUGIN_VERSION=${{ steps.compute_version.outputs.version }} -DCMAKE_APPLE_SILICON_PROCESSOR=${{ matrix.architecture }}
 
       - name: Build
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cmake --build . --config ${{ matrix.build_type }}
+          cmake --build . --config ${{ env.build_type }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NeoCCAMS-${{ matrix.platform }}
+          name: NeoCCAMS-${{ matrix.platform }}-${{ matrix.architecture }}
           path: |
-            lib/NeoCCAMS.*
-            bin\${{ matrix.build_type }}\NeoCCAMS.dll
+            lib/NeoCCAMS*
+            bin\${{ env.build_type }}\NeoCCAMS.dll
