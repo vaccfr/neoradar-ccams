@@ -9,7 +9,6 @@
 #include "Logger.h"
 #include "Fsd.h"
 #include "EuroScope.h"
-#include "TextMessage.h"
 #include "Sectors.h"
 #include "Chat.h"
 #include <filesystem>
@@ -97,12 +96,9 @@ public:
     virtual Fsd::FsdAPI& fsd() = 0;
 
     /**
-     * @brief Get the TextMessage API
-     * @return Reference to the TextMessage API
+     * @brief Get the Chat API
+     * @return Reference to the Chat API
      */
-    virtual TextMessage::TextMessageAPI& textMessage() = 0;
-
-    
     virtual Chat::ChatAPI& chat() = 0;
 };
 
@@ -189,14 +185,14 @@ public:
     virtual void OnOwnedSectorUpdated(const Sectors::OwnedSectorUpdatedEvent* event) {}
 
     // Text Message events
-    virtual void OnFrequencyMessageReceived(const TextMessage::FrequencyMessageReceivedEvent* event) {}
-    virtual void OnFlightplanMessageReceived(const TextMessage::FlightplanMessageReceivedEvent* event) {}
-    virtual void OnATISInfoMessageReceived(const TextMessage::ATISInfoMessageReceivedEvent* event) {}
-    virtual void OnPrivateMessageReceived(const TextMessage::PrivateMessageReceivedEvent* event) {}
-    virtual void OnBroadcastMessageReceived(const TextMessage::BroadcastMessageReceivedEvent* event) {}
-    virtual void OnSupervisorMessageReceived(const TextMessage::SupervisorMessageReceivedEvent* event) {}
-    virtual void OnServerMessageReceived(const TextMessage::ServerMessageReceivedEvent* event) {}
-    virtual void OnAtcMessageReceived(const TextMessage::AtcMessageReceivedEvent* event) {}
+    virtual void OnFrequencyMessageReceived(const Chat::FrequencyMessageReceivedEvent* event) {}
+    virtual void OnFlightplanMessageReceived(const Chat::FlightplanMessageReceivedEvent* event) {}
+    virtual void OnATISInfoMessageReceived(const Chat::ATISInfoMessageReceivedEvent* event) {}
+    virtual void OnPrivateMessageReceived(const Chat::PrivateMessageReceivedEvent* event) {}
+    virtual void OnBroadcastMessageReceived(const Chat::BroadcastMessageReceivedEvent* event) {}
+    virtual void OnSupervisorMessageReceived(const Chat::SupervisorMessageReceivedEvent* event) {}
+    virtual void OnServerMessageReceived(const Chat::ServerMessageReceivedEvent* event) {}
+    virtual void OnAtcMessageReceived(const Chat::AtcMessageReceivedEvent* event) {}
 
     // Squawk events
     virtual void OnSquawkAssigned(const Squawk::SquawkAssignedEvent* event) {}
