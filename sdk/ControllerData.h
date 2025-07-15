@@ -32,11 +32,11 @@ enum class AttentionState {
  * @brief Ground status of an aircraft
  */
 enum class GroundStatus {
-    Unknown = 0,
-    Taxi = 1,
-    Holding = 2,
-    Lining = 3,
-    Takeoff = 4
+    None = 0,
+    Start = 1,
+    Push = 2,
+    Taxi = 3,
+    Dep = 4
 };
 
 /**
@@ -192,6 +192,14 @@ public:
      * @return Controller data or nullptr if not found
      */
     virtual std::optional<ControllerDataModel> getByCallsign(const std::string& callsign) = 0;
+
+    /**
+     * @brief Set ground status for an aircraft (rate limited 1 call per second)
+     * @param callsign The callsign to look up
+     * @param groundStatus The new ground status to set
+     * @return Boolean indicating success or failure
+     */
+    virtual bool setGroundStatus(const std::string& callsign, const GroundStatus groundStatus) = 0;
 };
 
 } // namespace PluginSDK::ControllerData

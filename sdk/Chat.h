@@ -148,10 +148,6 @@ public:
         const std::string& commandId, const std::vector<std::string>& args)
         = 0;
 
-    // Validate command parameters
-    virtual ValidationResult ValidateParameters(
-        const std::string& commandId, const std::vector<std::string>& args, bool strict)
-        = 0;
 };
 
 // Registration token

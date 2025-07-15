@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Aircraft.h"
 #include "Flightplan.h"
 #include "Controller.h"
