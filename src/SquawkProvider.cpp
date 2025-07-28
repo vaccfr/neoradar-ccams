@@ -78,11 +78,17 @@ namespace Squawk
             }
             catch (const std::exception &e)
             {
-                logger_.error("Error while calling CCAMS API: " + std::string(e.what()));
+                logger_.error("Exception raised while calling CCAMS API: " + std::string(e.what()));
                 return GenerateFallbackSquawk();
             }
 
-            if (result->status != 200)
+            if (!result)
+            {
+                logger_.error("CCAMS API request failed: " + httplib::to_string(result.error()));
+                return GenerateFallbackSquawk();
+            }
+
+            if (result->status != httplib::StatusCode::OK_200)
             {
                 logger_.error("CCAMS API returned error: " + std::to_string(result->status));
                 return GenerateFallbackSquawk();
