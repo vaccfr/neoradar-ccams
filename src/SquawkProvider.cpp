@@ -71,7 +71,7 @@ namespace Squawk
 
             httplib::Headers headers;
             httplib::Result result;
-            headers.emplace("User-Agent", "neoradar/" + info_.clientVersion);
+            headers.emplace("User-Agent", "neoradar/0.1.0");
             try
             {
                 result = httpClient_->Get(url.c_str(), headers);
