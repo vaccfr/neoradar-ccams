@@ -1,7 +1,6 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <optional>
+
+
 
 namespace PluginSDK::Fsd {
 
@@ -148,6 +147,5 @@ public:
     virtual const std::optional<ConnectionInfo> getConnection() = 0;
 
 };
-
 
 } // namespace PluginSDK::Fsd

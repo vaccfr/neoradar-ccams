@@ -1,6 +1,5 @@
 // plugin/sdk/Sectors.h
 #pragma once
-#include <string>
 
 namespace PluginSDK::Sectors {
 

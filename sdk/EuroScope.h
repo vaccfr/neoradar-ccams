@@ -1,6 +1,5 @@
 // plugin/sdk/EuroScope.h
 #pragma once
-#include <string>
 
 namespace PluginSDK::EuroScope {
 

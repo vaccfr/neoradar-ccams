@@ -1,9 +1,9 @@
 #pragma once
+#include "Aircraft.h"
+#include "Flightplan.h"
 #include <memory>
 #include <string>
 #include <vector>
-#include "Flightplan.h"
-#include "Aircraft.h"
 
 namespace PluginSDK::Squawk {
 
@@ -31,7 +31,8 @@ public:
      * @return Token that will automatically unregister the provider when destroyed
      */
     virtual std::unique_ptr<RegistrationToken> registerProviderWithToken(
-        std::shared_ptr<SquawkProviderInterface> provider) = 0;
+        std::shared_ptr<SquawkProviderInterface> provider)
+        = 0;
 
     /**
      * @brief Set the active squawk provider
@@ -80,8 +81,8 @@ public:
      * @param flightplan
      * @return Generated squawk code (must be 4 octal digits: 0-7)
      */
-    virtual std::string GenerateSquawk(
-        const std::string& callsign, const Aircraft::Aircraft& aircraft, const Flightplan::Flightplan& flightplan)
+    virtual std::string GenerateSquawk(const std::string& callsign,
+        const Aircraft::Aircraft& aircraft, const Flightplan::Flightplan& flightplan)
         = 0;
 
     /**
