@@ -1,7 +1,7 @@
 // NeoCCAMS.h
 #pragma once
 #include <memory>
-#include "SDK.h"
+#include <NeoRadarSDK/SDK.h>
 #include "SquawkProvider.h"
 
 class NeoCCAMS : public PluginSDK::BasePlugin
