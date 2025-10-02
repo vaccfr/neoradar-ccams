@@ -45,7 +45,7 @@ jobs:
       - name: Checkout submodules
         shell: bash
         run: |
-          git submodule update --init --recursive vcpkg
+          git submodule update --init --recursive
 
       - name: Compute version
         id: compute_version

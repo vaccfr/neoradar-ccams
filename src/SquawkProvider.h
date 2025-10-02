@@ -5,7 +5,7 @@
 #include <mutex>
 #include <random>
 #include <regex>
-#include "SDK.h"
+#include <NeoRadarSDK/SDK.h>
 
 namespace Squawk
 {
