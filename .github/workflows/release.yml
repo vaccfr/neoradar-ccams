@@ -10,6 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+      plugin_name: NeoCCAMS
       build_type: Release
 
     strategy:
@@ -91,9 +92,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: NeoCCAMS ${{ steps.compute_version.outputs.version }}
+          name: ${{ env.plugin_name }} ${{ steps.compute_version.outputs.version }}
           prerelease: false
           draft: true
           files: |
-            lib/NeoCCAMS*
-            bin/${{ env.build_type }}/NeoCCAMS.dll
+            lib/${{ env.plugin_name }}*
+            bin/${{ env.build_type }}/${{ env.plugin_name }}.dll
