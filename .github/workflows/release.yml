@@ -5,12 +5,14 @@ on:
     tags:
       - 'v*'
 
+env:
+  plugin_name: NeoCCAMS
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     env:
-      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-      plugin_name: NeoCCAMS
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"    
       build_type: Release
 
     strategy:
@@ -88,7 +90,71 @@ jobs:
         run: |
           cmake --build . --config ${{ env.build_type }}
 
-      - name: Create release and upload artifacts
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.plugin_name }}-${{ matrix.platform }}-${{ matrix.architecture }}
+          path: |
+            lib/${{ env.plugin_name }}*
+            bin\${{ env.build_type }}\${{ env.plugin_name }}.dll
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute version
+        id: compute_version
+        shell: bash
+        run: |
+          version=$(echo ${{ github.ref }} | sed -E 's/refs\/tags\/(v)?//g')
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all_builds
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install NeoRadar CLI
+        run: yarn global add https://github.com/neoradar-project/cli.git
+
+      - name: Organize plugin binaries for packaging
+        run: |
+          mkdir -p all_builds/${{ env.plugin_name }}
+          find all_builds -type f -name '${{ env.plugin_name }}*' -exec cp {} all_builds/${{ env.plugin_name }}/ \;
+
+      - name: Rename binaries by platform and architecture
+        shell: bash
+        run: |
+          for f in all_builds/${{ env.plugin_name }}/*; do
+            ext="${f##*.}"
+            base=$(basename "$f")
+            # Detect platform and arch from the filename or from the file extension
+            if [[ "$base" == *"dylib" ]]; then
+              # macOS
+              if [[ "$base" == *"arm64"* ]]; then
+                mv "$f" "all_builds/${{ env.plugin_name }}/mac-arm64.dylib"
+              else
+                mv "$f" "all_builds/${{ env.plugin_name }}/mac-x64.dylib"
+              fi
+            elif [[ "$base" == *"so" ]]; then
+              # Linux
+              mv "$f" "all_builds/${{ env.plugin_name }}/linux-x64.so"
+            elif [[ "$base" == *"dll" ]]; then
+              # Windows
+              mv "$f" "all_builds/${{ env.plugin_name }}/windows-x64.dll"
+            fi
+          done
+
+      - name: Package .nrplugin
+        run: |
+          echo y | neoradar-cli create-plugin-archives ./all_builds
+
+      - name: Create release and upload .nrplugin
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
@@ -96,5 +162,4 @@ jobs:
           prerelease: false
           draft: true
           files: |
-            lib/${{ env.plugin_name }}*
-            bin/${{ env.build_type }}/${{ env.plugin_name }}.dll
+            plugins/${{ env.plugin_name }}.nrplugin
