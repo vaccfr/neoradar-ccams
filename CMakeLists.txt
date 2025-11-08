@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(NeoCCAMS)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set plugin version
@@ -44,6 +44,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenSSL::Crypto
 )
 
+if(APPLE)
+    # Prefer explicit framework flags for portability on CI / Xcode
+    target_link_libraries(${PROJECT_NAME} PRIVATE "-framework CoreFoundation" "-framework CFNetwork")
+endif()
+
 # Set output directory and properties
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -53,7 +58,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Add processor-specific output name for Apple platforms
-if(${CMAKE_HOST_APPLE})
+if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         OUTPUT_NAME ${PROJECT_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}
     )
