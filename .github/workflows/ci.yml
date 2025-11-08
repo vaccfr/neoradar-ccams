@@ -13,6 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+      plugin_name: NeoCCAMS
       build_type: Release
 
     strategy:
@@ -100,7 +101,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NeoCCAMS-${{ matrix.platform }}-${{ matrix.architecture }}
+          name: ${{ env.plugin_name }}-${{ matrix.platform }}-${{ matrix.architecture }}
           path: |
-            lib/NeoCCAMS*
-            bin\${{ env.build_type }}\NeoCCAMS.dll
+            lib/${{ env.plugin_name }}*
+            bin\${{ env.build_type }}\${{ env.plugin_name }}.dll
